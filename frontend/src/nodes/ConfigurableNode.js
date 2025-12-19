@@ -2,20 +2,21 @@
 import { useCallback } from 'react';
 import { BaseNode } from './BaseNode';
 import { useStore } from '../store';
-import { NodeConfigs, NodeStyles } from './nodeConfig';
+import { NodeConfigurations, NodeStyles, NodeFieldTypes } from './nodeConfig';
+import { SmartTextInput } from '../components/SmartTextInput';
 
 export const ConfigurableNode = ({ id, data, type }) => {
   const updateNodeField = useStore((state) => state.updateNodeField);
 
-  const config = NodeConfigs[type];
+  const handleFieldChange = useCallback((fieldName, value) => {
+    updateNodeField(id, fieldName, value);
+  }, [id, updateNodeField]);
+
+  const config = NodeConfigurations[type];
   if (!config) {
     console.error(`No configuration found for node type: ${type}`);
     return null;
   }
-
-  const handleFieldChange = useCallback((fieldName, value) => {
-    updateNodeField(id, fieldName, value);
-  }, [id, updateNodeField]);
 
   const renderField = (field) => {
     const value = data[field.name] || field.defaultValue || '';
@@ -72,7 +73,7 @@ export const ConfigurableNode = ({ id, data, type }) => {
           )}
         </label>
 
-        {field.type === 'text' && (
+        {field.type === NodeFieldTypes.TEXT_INPUT && (
           <input
             type="text"
             value={value}
@@ -82,7 +83,16 @@ export const ConfigurableNode = ({ id, data, type }) => {
           />
         )}
 
-        {field.type === 'textarea' && (
+        {field.type === NodeFieldTypes.SMART_INPUT && (
+          <SmartTextInput
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            style={NodeStyles.input}
+          />
+        )}
+
+        {field.type === NodeFieldTypes.TEXTAREA && (
           <textarea
             value={value}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
@@ -96,7 +106,21 @@ export const ConfigurableNode = ({ id, data, type }) => {
           />
         )}
 
-        {field.type === 'select' && (
+        {field.type === NodeFieldTypes.SMART_TEXTAREA && (
+          <SmartTextInput
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            style={{
+              ...NodeStyles.input,
+              minHeight: '60px',
+              resize: 'vertical',
+              fontFamily: 'inherit',
+            }}
+          />
+        )}
+
+        {field.type === NodeFieldTypes.SELECT && (
           <select
             value={value}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
@@ -109,9 +133,26 @@ export const ConfigurableNode = ({ id, data, type }) => {
             ))}
           </select>
         )}
+
+        {field.type === NodeFieldTypes.CHECKBOX && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+            <input
+              type="checkbox"
+              checked={value === true || value === 'true'}
+              onChange={(e) => handleFieldChange(field.name, e.target.checked)}
+              style={{
+                width: '16px',
+                height: '16px',
+                cursor: 'pointer',
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   };
+
+  const outputSchema = config.getOutputSchema ? config.getOutputSchema(data) : [];
 
   return (
     <BaseNode
@@ -119,8 +160,9 @@ export const ConfigurableNode = ({ id, data, type }) => {
       data={data}
       icon={config.icon}
       title={config.title}
+      subtitle={config.subtitle}
       handles={config.handles}
-      outputSchema={config.outputSchema}
+      outputSchema={outputSchema}
     >
       {config.fields.map(renderField)}
     </BaseNode>

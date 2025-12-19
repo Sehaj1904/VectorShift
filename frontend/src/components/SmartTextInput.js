@@ -1,7 +1,7 @@
 // SmartTextInput.js
 // Enhanced input with {{ variable autocomplete support and variable pills
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { VariableAutocomplete } from './VariableAutocomplete';
 import { getCursorPosition, getCaretCoordinatesAbsolute } from '../utils/cursorUtils';
 
@@ -31,47 +31,44 @@ export const SmartTextInput = ({ value, onChange, style, ...props }) => {
   const variables = parseVariables(value);
 
   // Detect {{ keystroke and cursor position changes
-  useEffect(() => {
+  const handleInputChange = (e) => {
+    // Call parent onChange handler first
+    if (onChange) {
+      onChange(e);
+    }
+
     const input = inputRef.current;
     if (!input) return;
 
-    const handleInput = (e) => {
+    const cursorPos = getCursorPosition(input);
+    setCursorPosition(cursorPos);
+
+    // Check if {{ was just typed
+    const textBefore = e.target.value.substring(0, cursorPos);
+    if (textBefore.endsWith('{{')) {
+      // Get cursor coordinates for dropdown positioning
+      const coords = getCaretCoordinatesAbsolute(input, cursorPos);
+      setAutocompletePosition(coords);
+      setAutocompleteOpen(true);
+    }
+  };
+
+  const handleClick = () => {
+    const input = inputRef.current;
+    if (!input) return;
+    const cursorPos = getCursorPosition(input);
+    setCursorPosition(cursorPos);
+  };
+
+  const handleKeyUp = (e) => {
+    // Update cursor position on arrow keys, home, end, etc.
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      const input = inputRef.current;
+      if (!input) return;
       const cursorPos = getCursorPosition(input);
       setCursorPosition(cursorPos);
-
-      // Check if {{ was just typed
-      const textBefore = input.value.substring(0, cursorPos);
-      if (textBefore.endsWith('{{')) {
-        // Get cursor coordinates for dropdown positioning
-        const coords = getCaretCoordinatesAbsolute(input, cursorPos);
-        setAutocompletePosition(coords);
-        setAutocompleteOpen(true);
-      }
-    };
-
-    const handleClick = () => {
-      const cursorPos = getCursorPosition(input);
-      setCursorPosition(cursorPos);
-    };
-
-    const handleKeyUp = (e) => {
-      // Update cursor position on arrow keys, home, end, etc.
-      if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-        const cursorPos = getCursorPosition(input);
-        setCursorPosition(cursorPos);
-      }
-    };
-
-    input.addEventListener('input', handleInput);
-    input.addEventListener('click', handleClick);
-    input.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      input.removeEventListener('input', handleInput);
-      input.removeEventListener('click', handleClick);
-      input.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
+    }
+  };
 
   // Handle variable selection from autocomplete
   const handleVariableSelect = (variable) => {
@@ -135,8 +132,10 @@ export const SmartTextInput = ({ value, onChange, style, ...props }) => {
         <input
           ref={inputRef}
           type="text"
-          value={value}
-          onChange={onChange}
+          value={value || ''}
+          onChange={handleInputChange}
+          onClick={handleClick}
+          onKeyUp={handleKeyUp}
           onFocus={() => setShowPillMode(false)}
           onBlur={() => setTimeout(() => setShowPillMode(true), 150)}
           style={{

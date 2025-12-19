@@ -69,43 +69,116 @@ export const NodeDetailsPanel = () => {
         {/* Header */}
         <div
           style={{
-            padding: '20px 24px',
+            padding: '16px 20px',
             borderBottom: '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            backgroundColor: '#fafafa'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
               <line x1="9" y1="3" x2="9" y2="21"/>
             </svg>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>
+            <h2 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: '#111827' }}>
               Node Details
             </h2>
           </div>
-          <button
-            onClick={closeNodeDetailsPanel}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#6b7280',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#111827'}
-            onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Settings button */}
+            <button
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#6b7280',
+                transition: 'color 0.2s',
+                borderRadius: '4px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#111827';
+                e.currentTarget.style.backgroundColor = '#f3f4f6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#6b7280';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              title="Settings"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v6m0 6v6m5.657-13.657l-4.243 4.243m-2.828 2.828l-4.243 4.243m13.072 0l-4.243-4.243m-2.828-2.828L1.343 5.343"/>
+              </svg>
+            </button>
+
+            {/* Copy button */}
+            <button
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#6b7280',
+                transition: 'color 0.2s',
+                borderRadius: '4px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#111827';
+                e.currentTarget.style.backgroundColor = '#f3f4f6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#6b7280';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              title="Copy"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+
+            {/* Close button */}
+            <button
+              onClick={closeNodeDetailsPanel}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#6b7280',
+                transition: 'color 0.2s',
+                borderRadius: '4px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#111827';
+                e.currentTarget.style.backgroundColor = '#f3f4f6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#6b7280';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              title="Close"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Content */}
@@ -182,27 +255,28 @@ export const NodeDetailsPanel = () => {
             </div>
 
             {outputSchema.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {outputSchema.map((output, index) => (
                   <div
                     key={index}
                     style={{
                       display: 'flex',
-                      alignItems: 'flex-start',
+                      alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '12px',
+                      padding: '10px 12px',
                       backgroundColor: '#f9fafb',
                       border: '1px solid #e5e7eb',
-                      borderRadius: '6px'
+                      borderRadius: '6px',
+                      gap: '12px'
                     }}
                   >
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
                           fontSize: '13px',
                           fontWeight: '600',
                           color: '#111827',
-                          marginBottom: '4px',
+                          marginBottom: '2px',
                           fontFamily: 'monospace'
                         }}
                       >
@@ -214,19 +288,54 @@ export const NodeDetailsPanel = () => {
                         </div>
                       )}
                     </div>
-                    <div
-                      style={{
-                        padding: '4px 8px',
-                        backgroundColor: '#6366f1',
-                        color: '#ffffff',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        marginLeft: '12px',
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      {output.type || 'Text'}
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        style={{
+                          padding: '4px 8px',
+                          backgroundColor: '#6366f1',
+                          color: '#ffffff',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {output.type || 'Text'}
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          // Handle delete - you can add logic here if needed
+                          console.log('Delete output field:', output.name);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#6b7280',
+                          transition: 'color 0.2s',
+                          borderRadius: '4px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = '#ef4444';
+                          e.currentTarget.style.backgroundColor = '#fee2e2';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = '#6b7280';
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                        title="Delete output field"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="18" y1="6" x2="6" y2="18"/>
+                          <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 ))}

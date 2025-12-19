@@ -102,13 +102,7 @@ export const PipelineUI = () => {
           style={{
             width: '100%',
             height: '100%',
-            minHeight: '600px',
-            background: '#f8f9fa',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
+            background: '#f8f9fa'
           }}
         >
           <ReactFlow
@@ -124,10 +118,19 @@ export const PipelineUI = () => {
             snapGrid={[gridSize, gridSize]}
             snapToGrid={true}
             connectionLineType="smoothstep"
-            connectionLineStyle={{ strokeWidth: 4, stroke: '#6366f1', opacity: 0.8 }}
+            connectionLineStyle={{
+              strokeWidth: 4,
+              stroke: '#6366f1',
+              strokeDasharray: '5,5'
+            }}
+            connectionMode="loose"
             defaultEdgeOptions={{
-              style: { strokeWidth: 2, stroke: '#6366f1' },
-              animated: true,
+              type: 'smoothstep',
+              style: {
+                strokeWidth: 2,
+                stroke: '#6366f1'
+              },
+              animated: false,
             }}
             minZoom={0.1}
             maxZoom={4}

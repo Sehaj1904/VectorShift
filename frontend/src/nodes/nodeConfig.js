@@ -112,6 +112,7 @@ export const NodeFieldTypes = {
   SELECT: 'select',
   SMART_TEXTAREA: 'smartTextarea',
   SMART_INPUT: 'smartInput',
+  CHECKBOX: 'checkbox',
 };
 
 // Node configuration registry
@@ -148,6 +149,7 @@ export const NodeConfigurations = {
         type: NodeFieldTypes.SMART_TEXTAREA,
         required: true,
         placeholder: 'User message...',
+        typeBadge: 'Text',
       },
     ],
     getOutputSchema: (data) => [
@@ -190,6 +192,7 @@ export const NodeConfigurations = {
         type: NodeFieldTypes.SMART_TEXTAREA,
         required: true,
         placeholder: 'Output value...',
+        typeBadge: 'Text',
       },
     ],
     getOutputSchema: () => [],
@@ -216,6 +219,7 @@ export const NodeConfigurations = {
         type: NodeFieldTypes.SMART_TEXTAREA,
         required: true,
         placeholder: 'Enter text...',
+        typeBadge: 'Text',
       },
     ],
     getOutputSchema: () => [
@@ -228,17 +232,12 @@ export const NodeConfigurations = {
   },
 
   llm: {
-    title: 'LLM',
+    title: 'OpenAI',
     subtitle: 'Call a language model with a prompt.',
     icon: NodeIcons.llm,
     handles: {
-      sources: [
-        { id: 'response', style: { top: '30%' } },
-        { id: 'tokens_used', style: { top: '50%' } },
-        { id: 'input_tokens', style: { top: '70%' } },
-        { id: 'output_tokens', style: { top: '90%' } },
-      ],
-      targets: [{ id: 'prompt', style: { top: '50%' } }],
+      sources: [{ id: 'output', style: { top: '50%' } }],
+      targets: [{ id: 'input', style: { top: '50%' } }],
     },
     fields: [
       {
@@ -252,14 +251,42 @@ export const NodeConfigurations = {
         label: 'System (Instructions)',
         type: NodeFieldTypes.SMART_TEXTAREA,
         required: false,
-        placeholder: 'System instructions...',
+        placeholder: 'Answer the Question based on Context',
+        typeBadge: 'Text',
       },
       {
         name: 'prompt',
         label: 'Prompt',
         type: NodeFieldTypes.SMART_TEXTAREA,
         required: true,
-        placeholder: 'Enter your prompt...',
+        placeholder: 'Question',
+        typeBadge: 'Text',
+      },
+      {
+        name: 'context',
+        label: 'Context',
+        type: NodeFieldTypes.SMART_TEXTAREA,
+        required: false,
+        placeholder: 'Context...',
+        typeBadge: 'Text',
+      },
+      {
+        name: 'model',
+        label: 'Model',
+        type: NodeFieldTypes.SELECT,
+        options: [
+          { value: 'chatgpt-4o-latest', label: 'chatgpt-4o-latest' },
+          { value: 'gpt-4', label: 'GPT-4' },
+          { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+        ],
+        defaultValue: 'chatgpt-4o-latest',
+        typeBadge: 'Dropdown',
+      },
+      {
+        name: 'usePersonalApiKey',
+        label: 'Use Personal API Key',
+        type: NodeFieldTypes.CHECKBOX,
+        defaultValue: false,
       },
     ],
     getOutputSchema: () => [
@@ -275,11 +302,8 @@ export const NodeConfigurations = {
     subtitle: 'Semantically query a knowledge base for relevant chunks.',
     icon: NodeIcons.knowledgeBase,
     handles: {
-      sources: [
-        { id: 'chunks', style: { top: '40%' } },
-        { id: 'citation_metadata', style: { top: '70%' } },
-      ],
-      targets: [{ id: 'query', style: { top: '50%' } }],
+      sources: [{ id: 'output', style: { top: '50%' } }],
+      targets: [{ id: 'input', style: { top: '50%' } }],
     },
     fields: [
       {
