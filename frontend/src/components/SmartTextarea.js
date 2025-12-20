@@ -20,14 +20,14 @@ export const SmartTextarea = ({ value, onChange, style, ...props }) => {
       const cursorPos = getCursorPosition(textarea);
       setCursorPosition(cursorPos);
 
-      // Check if {{ was just typed
-      const textBefore = textarea.value.substring(0, cursorPos);
-      if (textBefore.endsWith('{{')) {
-        // Get cursor coordinates for dropdown positioning
-        const coords = getCaretCoordinatesAbsolute(textarea, cursorPos);
-        setAutocompletePosition(coords);
-        setAutocompleteOpen(true);
-      }
+      // Check if {{ was just typed - DISABLED
+      // const textBefore = textarea.value.substring(0, cursorPos);
+      // if (textBefore.endsWith('{{')) {
+      //   // Get cursor coordinates for dropdown positioning
+      //   const coords = getCaretCoordinatesAbsolute(textarea, cursorPos);
+      //   setAutocompletePosition(coords);
+      //   setAutocompleteOpen(true);
+      // }
     };
 
     const handleClick = () => {

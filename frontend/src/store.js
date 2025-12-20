@@ -8,6 +8,7 @@ export const useStore = create((set, get) => ({
   executingNodeId: null,
   nodeIdCounter: {},
   nodeDetailsPanelOpen: false,
+  isInteractivityLocked: false,
   executionState: {
     isExecuting: false,
     currentIndex: 0,
@@ -80,6 +81,27 @@ export const useStore = create((set, get) => ({
     return config.getOutputSchema(node.data);
   },
 
+  getAvailableVariables: () => {
+    const nodes = get().nodes;
+    const { getNodeConfig } = require('./nodes/nodeConfig');
+
+    // Get all nodes that have outputs (exclude customOutput nodes)
+    return nodes
+      .filter(node => node.type !== 'customOutput')
+      .map(node => {
+        const config = getNodeConfig(node.type);
+        const outputSchema = config?.getOutputSchema ? config.getOutputSchema(node.data) : [];
+
+        return {
+          id: node.id,
+          nodeName: node.data?.nodeName || node.id,
+          type: node.type,
+          outputFields: outputSchema
+        };
+      })
+      .filter(node => node.outputFields.length > 0);
+  },
+
   startExecution: (executionOrder) =>
     set({
       executionState: {
@@ -127,5 +149,15 @@ export const useStore = create((set, get) => ({
         ...get().executionState,
         isExecuting: false
       }
+    }),
+
+  toggleInteractivity: () =>
+    set({
+      isInteractivityLocked: !get().isInteractivityLocked
+    }),
+
+  setInteractivityLocked: (locked) =>
+    set({
+      isInteractivityLocked: locked
     })
 }));

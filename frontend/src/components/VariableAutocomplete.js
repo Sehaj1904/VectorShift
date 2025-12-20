@@ -129,27 +129,7 @@ export const VariableAutocomplete = ({
   };
 
   if (currentList.length === 0) {
-    return (
-      <div
-        ref={dropdownRef}
-        style={{
-          position: 'absolute',
-          left: position.x,
-          top: position.y + position.lineHeight + 4,
-          backgroundColor: '#ffffff',
-          border: '1px solid #e2e8ff',
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          padding: '12px',
-          fontSize: '12px',
-          color: '#6b7280',
-          zIndex: 10000,
-          minWidth: '250px'
-        }}
-      >
-        {step === 'nodes' ? 'No nodes with outputs available' : 'No output fields'}
-      </div>
-    );
+    return null;
   }
 
   return (

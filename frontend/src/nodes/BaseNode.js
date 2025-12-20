@@ -40,20 +40,44 @@ export const BaseNode = ({
     >
       {/* Target Handles (Left side - inputs) */}
       {handles.targets?.map((h, index) => (
-        <Handle
-          key={h.id}
-          id={h.id}
-          type="target"
-          position={Position.Left}
-          style={{
-            left: -6,
-            width: 12,
-            height: 12,
-            background: '#fff',
-            border: '2px solid #6b7280',
-            ...h.style
-          }}
-        />
+        <div key={h.id}>
+          <Handle
+            id={h.id}
+            type="target"
+            position={Position.Left}
+            style={{
+              width: 10,
+              height: 10,
+              background: '#fff',
+              border: '2px solid #6b7280',
+              borderRadius: '50%',
+              left: -5,
+              top: h.style?.top || '50%',
+              ...h.style
+            }}
+          />
+          {h.label && (
+            <div
+              style={{
+                position: 'absolute',
+                left: -10,
+                top: h.style?.top || '50%',
+                transform: 'translateX(-100%) translateY(-50%)',
+                fontSize: '10px',
+                fontWeight: '500',
+                color: '#3b82f6',
+                background: '#dbeafe',
+                padding: '2px 6px',
+                borderRadius: '3px',
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+                fontFamily: 'monospace'
+              }}
+            >
+              {h.label}
+            </div>
+          )}
+        </div>
       ))}
 
       {/* Header */}
@@ -154,11 +178,12 @@ export const BaseNode = ({
           type="source"
           position={Position.Right}
           style={{
-            right: -6,
-            width: 12,
-            height: 12,
+            right: -5,
+            width: 10,
+            height: 10,
             background: '#fff',
             border: '2px solid #6b7280',
+            borderRadius: '50%',
             ...h.style
           }}
         />

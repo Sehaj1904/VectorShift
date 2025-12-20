@@ -43,14 +43,14 @@ export const SmartTextInput = ({ value, onChange, style, ...props }) => {
     const cursorPos = getCursorPosition(input);
     setCursorPosition(cursorPos);
 
-    // Check if {{ was just typed
-    const textBefore = e.target.value.substring(0, cursorPos);
-    if (textBefore.endsWith('{{')) {
-      // Get cursor coordinates for dropdown positioning
-      const coords = getCaretCoordinatesAbsolute(input, cursorPos);
-      setAutocompletePosition(coords);
-      setAutocompleteOpen(true);
-    }
+    // Check if {{ was just typed - DISABLED
+    // const textBefore = e.target.value.substring(0, cursorPos);
+    // if (textBefore.endsWith('{{')) {
+    //   // Get cursor coordinates for dropdown positioning
+    //   const coords = getCaretCoordinatesAbsolute(input, cursorPos);
+    //   setAutocompletePosition(coords);
+    //   setAutocompleteOpen(true);
+    // }
   };
 
   const handleClick = () => {

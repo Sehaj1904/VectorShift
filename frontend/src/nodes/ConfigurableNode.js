@@ -154,6 +154,9 @@ export const ConfigurableNode = ({ id, data, type }) => {
 
   const outputSchema = config.getOutputSchema ? config.getOutputSchema(data) : [];
 
+  // Use dynamic handles if getDynamicHandles function exists, otherwise use static handles
+  const handles = config.getDynamicHandles ? config.getDynamicHandles(data) : config.handles;
+
   return (
     <BaseNode
       id={id}
@@ -161,7 +164,7 @@ export const ConfigurableNode = ({ id, data, type }) => {
       icon={config.icon}
       title={config.title}
       subtitle={config.subtitle}
-      handles={config.handles}
+      handles={handles}
       outputSchema={outputSchema}
     >
       {config.fields.map(renderField)}

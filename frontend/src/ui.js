@@ -37,6 +37,7 @@ export const PipelineUI = () => {
     const onNodesChange = useStore((state) => state.onNodesChange);
     const onEdgesChange = useStore((state) => state.onEdgesChange);
     const onConnect = useStore((state) => state.onConnect);
+    const isInteractivityLocked = useStore((state) => state.isInteractivityLocked);
 
     useEffect(() => {
       if (reactFlowInstance && nodes.length > 0) {
@@ -117,11 +118,15 @@ export const PipelineUI = () => {
             proOptions={proOptions}
             snapGrid={[gridSize, gridSize]}
             snapToGrid={true}
+            nodesDraggable={!isInteractivityLocked}
+            nodesConnectable={!isInteractivityLocked}
+            elementsSelectable={!isInteractivityLocked}
             connectionLineType="smoothstep"
             connectionLineStyle={{
-              strokeWidth: 4,
+              strokeWidth: 3,
               stroke: '#6366f1',
-              strokeDasharray: '5,5'
+              strokeDasharray: '5,5',
+              opacity: 1
             }}
             connectionMode="loose"
             defaultEdgeOptions={{

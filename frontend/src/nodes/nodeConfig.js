@@ -202,6 +202,41 @@ export const NodeConfigurations = {
     title: 'Text',
     subtitle: 'Store and output static text.',
     icon: NodeIcons.text,
+    // Dynamic handles based on variables in text
+    getDynamicHandles: (data) => {
+      const text = data?.text || '';
+
+      // Parse variables from text using regex to match {{variable}}
+      const variablePattern = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)?)\s*\}\}/g;
+      const variables = [];
+      const seenVariables = new Set();
+      let match;
+
+      while ((match = variablePattern.exec(text)) !== null) {
+        const varName = match[1].trim();
+        if (!seenVariables.has(varName)) {
+          seenVariables.add(varName);
+          variables.push(varName);
+        }
+      }
+
+      // Create target handles for each unique variable
+      const targetHandles = variables.map((varName, index) => ({
+        id: `var-${varName}`,
+        style: {
+          top: `${30 + (index * 25)}%`,
+          background: '#dbeafe',
+          border: '2px solid #3b82f6'
+        },
+        label: varName
+      }));
+
+      return {
+        sources: [{ id: 'output', style: { top: '50%' } }],
+        targets: targetHandles,
+      };
+    },
+    // Fallback static handles when no data
     handles: {
       sources: [{ id: 'output', style: { top: '50%' } }],
       targets: [],
