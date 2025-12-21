@@ -1,6 +1,4 @@
-// ui.js
-// Displays the drag-and-drop UI
-// --------------------------------------------------
+
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, { Controls, Background, MiniMap, Panel } from 'reactflow';
@@ -14,7 +12,6 @@ import 'reactflow/dist/style.css';
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
 
-// Create wrapper components for each node type using ConfigurableNode
 const createNodeComponent = (type) => (props) => <ConfigurableNode {...props} type={type} />;
 
 const nodeTypes = {
@@ -29,7 +26,6 @@ export const PipelineUI = () => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    // Subscribe to store without shallow comparison
     const nodes = useStore((state) => state.nodes);
     const edges = useStore((state) => state.edges);
     const getNodeID = useStore((state) => state.getNodeID);
@@ -92,7 +88,6 @@ export const PipelineUI = () => {
     }, []);
 
     const onNodeClick = useCallback((_event, _node) => {
-      // Node click handled by BaseNode
     }, []);
 
     return (

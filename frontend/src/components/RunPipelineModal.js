@@ -1,4 +1,4 @@
-// RunPipelineModal.js
+
 import { useState } from 'react';
 import { useStore } from '../store';
 import { executePipeline } from '../execution/PipelineExecutor';
@@ -17,7 +17,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
 
-  // Find all input nodes
   const inputNodes = nodes.filter(node => node.type === 'customInput');
 
   const handleInputChange = (nodeId, value) => {
@@ -91,7 +90,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
         flexDirection: 'column',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
       }}>
-        {/* Header */}
         <div style={{
           padding: '20px 24px',
           borderBottom: '1px solid #e5e7eb',
@@ -122,13 +120,11 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Content */}
         <div style={{
           padding: '24px',
           overflowY: 'auto',
           flex: 1
         }}>
-          {/* Inputs Section */}
           {inputNodes.length > 0 && !results && (
             <div style={{ marginBottom: '24px' }}>
               <h3 style={{
@@ -171,7 +167,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Results Section */}
           {results && (
             <div>
               <h3 style={{
@@ -228,7 +223,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
                 );
               })}
 
-              {/* All other nodes results */}
               <div style={{ marginTop: '24px' }}>
                 <h3 style={{
                   fontSize: '14px',
@@ -272,7 +266,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Error Display */}
           {error && (
             <div style={{
               padding: '16px',
@@ -299,7 +292,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* No inputs message */}
           {inputNodes.length === 0 && !results && (
             <div style={{
               padding: '24px',
@@ -312,7 +304,6 @@ export const RunPipelineModal = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {/* Footer */}
         <div style={{
           padding: '16px 24px',
           borderTop: '1px solid #e5e7eb',

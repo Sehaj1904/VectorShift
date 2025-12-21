@@ -1,4 +1,3 @@
-// ConfigurableNode.js
 import { useCallback } from 'react';
 import { BaseNode } from './BaseNode';
 import { useStore } from '../store';
@@ -21,7 +20,6 @@ export const ConfigurableNode = ({ id, data, type }) => {
   const renderField = (field) => {
     const value = data[field.name] || field.defaultValue || '';
 
-    // Skip rendering nodeName field since it's shown as badge
     if (field.name === 'nodeName') {
       return null;
     }
@@ -39,7 +37,6 @@ export const ConfigurableNode = ({ id, data, type }) => {
       justifyContent: 'space-between',
     };
 
-    // Help icon component
     const HelpIcon = () => (
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
         <circle cx="12" cy="12" r="10"/>
@@ -48,7 +45,6 @@ export const ConfigurableNode = ({ id, data, type }) => {
       </svg>
     );
 
-    // Get type badge if available
     const typeBadge = field.typeBadge;
 
     return (
@@ -111,10 +107,10 @@ export const ConfigurableNode = ({ id, data, type }) => {
             value={value}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
             placeholder={field.placeholder}
+            multiline={true}
             style={{
               ...NodeStyles.input,
               minHeight: '60px',
-              resize: 'vertical',
               fontFamily: 'inherit',
             }}
           />
@@ -153,8 +149,7 @@ export const ConfigurableNode = ({ id, data, type }) => {
   };
 
   const outputSchema = config.getOutputSchema ? config.getOutputSchema(data) : [];
-
-  // Use dynamic handles if getDynamicHandles function exists, otherwise use static handles
+  
   const handles = config.getDynamicHandles ? config.getDynamicHandles(data) : config.handles;
 
   return (

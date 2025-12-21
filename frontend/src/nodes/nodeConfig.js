@@ -1,7 +1,4 @@
-// nodeConfig.js
-// Centralized node configuration and icon system
 
-// SVG Icons for each node type
 export const NodeIcons = {
   input: (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -40,13 +37,10 @@ export const NodeIcons = {
   ),
 };
 
-// Centralized node styling configuration
 export const NodeStyles = {
-  // Default node dimensions
   defaultWidth: 240,
   minHeight: 70,
 
-  // Colors
   colors: {
     background: '#ffffff',
     headerBg: '#f9fafb',
@@ -58,25 +52,21 @@ export const NodeStyles = {
     nodeNameText: '#6b7280',
   },
 
-  // Border and shadow
   borderRadius: '8px',
   border: '1px solid #d1d5db',
   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
 
-  // Header styling
   header: {
     backgroundColor: '#f9fafb',
     borderBottom: '1px solid #e5e7eb',
     padding: '5px 8px',
   },
 
-  // Body styling
   body: {
     padding: '6px 8px 8px',
     fontSize: '11px',
   },
 
-  // Input field styling
   input: {
     padding: '4px 6px',
     borderRadius: '4px',
@@ -105,7 +95,6 @@ export const NodeStyles = {
   },
 };
 
-// Node field configurations
 export const NodeFieldTypes = {
   TEXT_INPUT: 'textInput',
   TEXTAREA: 'textarea',
@@ -115,7 +104,6 @@ export const NodeFieldTypes = {
   CHECKBOX: 'checkbox',
 };
 
-// Node configuration registry
 export const NodeConfigurations = {
   customInput: {
     title: 'Input',
@@ -202,11 +190,9 @@ export const NodeConfigurations = {
     title: 'Text',
     subtitle: 'Store and output static text.',
     icon: NodeIcons.text,
-    // Dynamic handles based on variables in text
     getDynamicHandles: (data) => {
       const text = data?.text || '';
 
-      // Parse variables from text using regex to match {{variable}}
       const variablePattern = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)?)\s*\}\}/g;
       const variables = [];
       const seenVariables = new Set();
@@ -220,7 +206,6 @@ export const NodeConfigurations = {
         }
       }
 
-      // Create target handles for each unique variable
       const targetHandles = variables.map((varName, index) => ({
         id: `var-${varName}`,
         style: {
@@ -236,7 +221,6 @@ export const NodeConfigurations = {
         targets: targetHandles,
       };
     },
-    // Fallback static handles when no data
     handles: {
       sources: [{ id: 'output', style: { top: '50%' } }],
       targets: [],
@@ -381,12 +365,10 @@ export const NodeConfigurations = {
   },
 };
 
-// Helper function to get node configuration
 export const getNodeConfig = (nodeType) => {
   return NodeConfigurations[nodeType] || null;
 };
 
-// Helper function to get node default data
 export const getNodeDefaultData = (nodeId, nodeType) => {
   const config = getNodeConfig(nodeType);
   if (!config) return { id: nodeId, nodeType };
@@ -397,7 +379,6 @@ export const getNodeDefaultData = (nodeId, nodeType) => {
     nodeName: nodeId.replace(`${nodeType}-`, '').replace('custom', ''),
   };
 
-  // Set default values for fields
   config.fields.forEach(field => {
     if (field.defaultValue !== undefined) {
       defaultData[field.name] = field.defaultValue;

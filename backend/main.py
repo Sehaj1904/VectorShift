@@ -1,4 +1,3 @@
-# main.py
 
 from fastapi import FastAPI  # pyright: ignore[reportMissingImports]
 from fastapi.middleware.cors import CORSMiddleware  # pyright: ignore[reportMissingImports]
@@ -7,7 +6,6 @@ from typing import List, Dict, Any
 
 app = FastAPI()
 
-# Allow frontend to call backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,7 +24,6 @@ def parse_pipeline(pipeline: Pipeline):
     num_nodes = len(pipeline.nodes)
     num_edges = len(pipeline.edges)
 
-    # Adjacency List
     adjacency = {node["id"]: [] for node in pipeline.nodes}
 
     for edge in pipeline.edges:
@@ -40,7 +37,7 @@ def parse_pipeline(pipeline: Pipeline):
 
     def dfs(node):
         if node in path:
-            return True  # cycle
+            return True
         if node in visited:
             return False
 
@@ -54,7 +51,6 @@ def parse_pipeline(pipeline: Pipeline):
         path.remove(node)
         return False
 
-    # Check for cycles
     is_dag = True
     for node_id in adjacency:
         if dfs(node_id):

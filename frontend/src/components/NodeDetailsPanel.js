@@ -1,5 +1,3 @@
-// NodeDetailsPanel.js
-// Right sidebar panel showing node output fields
 
 import { useStore } from '../store';
 
@@ -10,17 +8,14 @@ export const NodeDetailsPanel = () => {
   const nodes = useStore((state) => state.nodes);
   const getNodeOutputSchema = useStore((state) => state.getNodeOutputSchema);
 
-  // Get the selected node
   const selectedNode = nodes.find(n => n.id === selectedNodeId);
 
   if (!nodeDetailsPanelOpen || !selectedNode) {
     return null;
   }
 
-  // Get output schema for the selected node
   const outputSchema = getNodeOutputSchema(selectedNodeId) || [];
 
-  // Get node type label
   const getNodeTypeLabel = (type) => {
     switch (type) {
       case 'customInput': return 'Input';
@@ -34,7 +29,6 @@ export const NodeDetailsPanel = () => {
 
   return (
     <>
-      {/* Backdrop overlay */}
       <div
         style={{
           position: 'fixed',
@@ -49,7 +43,6 @@ export const NodeDetailsPanel = () => {
         onClick={closeNodeDetailsPanel}
       />
 
-      {/* Side panel */}
       <div
         style={{
           position: 'fixed',
@@ -66,7 +59,6 @@ export const NodeDetailsPanel = () => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div
           style={{
             padding: '16px 20px',
@@ -88,7 +80,6 @@ export const NodeDetailsPanel = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Settings button */}
             <button
               style={{
                 background: 'none',
@@ -118,7 +109,6 @@ export const NodeDetailsPanel = () => {
               </svg>
             </button>
 
-            {/* Copy button */}
             <button
               style={{
                 background: 'none',
@@ -148,7 +138,6 @@ export const NodeDetailsPanel = () => {
               </svg>
             </button>
 
-            {/* Close button */}
             <button
               onClick={closeNodeDetailsPanel}
               style={{
@@ -181,9 +170,7 @@ export const NodeDetailsPanel = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
-          {/* Node Type */}
           <div style={{ marginBottom: '24px' }}>
             <div
               style={{
@@ -201,7 +188,6 @@ export const NodeDetailsPanel = () => {
             </div>
           </div>
 
-          {/* Node Name */}
           <div style={{ marginBottom: '24px' }}>
             <div
               style={{
@@ -219,7 +205,6 @@ export const NodeDetailsPanel = () => {
             </div>
           </div>
 
-          {/* Helper Text */}
           <div
             style={{
               padding: '12px',
@@ -234,7 +219,6 @@ export const NodeDetailsPanel = () => {
             </p>
           </div>
 
-          {/* Output Fields Section */}
           <div>
             <div
               style={{
@@ -306,7 +290,6 @@ export const NodeDetailsPanel = () => {
 
                       <button
                         onClick={() => {
-                          // Handle delete - you can add logic here if needed
                           console.log('Delete output field:', output.name);
                         }}
                         style={{

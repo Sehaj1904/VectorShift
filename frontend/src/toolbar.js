@@ -1,4 +1,3 @@
-// toolbar.js
 
 import { DraggableNode } from './draggableNode';
 import { useStore } from './store';
@@ -33,7 +32,6 @@ export const PipelineToolbar = () => {
                     gap: '16px',
                     maxWidth: '100%'
                 }}>
-                    {/* Left side - Logo and Navigation */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flex: 1, minWidth: 0 }}>
                         <div style={{
                             fontSize: '18px',
@@ -55,10 +53,8 @@ export const PipelineToolbar = () => {
                             <DraggableNode type='knowledgeBase' label='Knowledge Base' />
                         </div>
                     </div>
-
-                    {/* Right side - Actions */}
+                        
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexShrink: 0 }}>
-                        {/* Run Pipeline Button */}
                         <button
                             onClick={handleRunPipeline}
                             style={{

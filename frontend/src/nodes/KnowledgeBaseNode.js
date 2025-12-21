@@ -1,11 +1,8 @@
-// KnowledgeBaseNode.js
-// Custom node for Knowledge Base with Edit and Create buttons
-
 import { useState, useEffect, useMemo } from 'react';
 import { BaseNode } from './BaseNode';
 import { useStore } from '../store';
 import { SmartTextInput } from '../components/SmartTextInput';
-import { getNodeConfig, NodeFieldTypes, NodeStyles } from './nodeConfig';
+import { getNodeConfig, NodeStyles } from './nodeConfig';
 
 export const KnowledgeBaseNode = ({ id, data, type }) => {
   const updateNodeField = useStore((state) => state.updateNodeField);

@@ -18,7 +18,6 @@ export const BaseNode = ({
   const setNodes = useStore((state) => state.setNodes);
 
   const handleDelete = () => {
-    // Remove this node from the nodes array
     const updatedNodes = nodes.filter(node => node.id !== id);
     setNodes(updatedNodes);
   };
@@ -38,7 +37,6 @@ export const BaseNode = ({
         ...style
       }}
     >
-      {/* Target Handles (Left side - inputs) */}
       {handles.targets?.map((h, index) => (
         <div key={h.id}>
           <Handle
@@ -80,7 +78,6 @@ export const BaseNode = ({
         </div>
       ))}
 
-      {/* Header */}
       <div style={{
         padding: '10px 14px',
         borderBottom: '1px solid #e5e7eb',
@@ -100,7 +97,6 @@ export const BaseNode = ({
           )}
         </div>
 
-        {/* Node Details Button */}
         <button
           onClick={() => {
             setSelectedNode(id);
@@ -125,7 +121,6 @@ export const BaseNode = ({
           </svg>
         </button>
 
-        {/* Delete Button */}
         <button
           onClick={handleDelete}
           style={{
@@ -165,12 +160,10 @@ export const BaseNode = ({
         </div>
       </div>
 
-      {/* Body - Input fields */}
       <div style={{ padding: '12px 14px' }}>
         {children}
       </div>
 
-      {/* Source Handles (Right side - outputs) */}
       {handles.sources?.map((h, index) => (
         <Handle
           key={h.id}

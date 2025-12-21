@@ -1,4 +1,3 @@
-// submit.js
 
 import { useStore } from './store';
 
@@ -24,7 +23,6 @@ export const SubmitButton = () => {
 
             const data = await response.json();
             
-            // Create user-friendly alert
             const message = `
 Pipeline Analysis Results:
 

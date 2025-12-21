@@ -1,6 +1,4 @@
-// draggableNode.js
-
-// SVG Icon components for each node type
+  
 const getNodeIcon = (type) => {
   const iconStyle = {
     width: '24px',

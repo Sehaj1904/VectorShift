@@ -1,18 +1,27 @@
-// SmartTextInput.js
-// Enhanced input with {{ variable autocomplete support and variable pills
-
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { VariableAutocomplete } from './VariableAutocomplete';
-import { getCursorPosition, getCaretCoordinatesAbsolute } from '../utils/cursorUtils';
+import { getCursorPosition } from '../utils/cursorUtils';
 
-export const SmartTextInput = ({ value, onChange, style, ...props }) => {
+export const SmartTextInput = ({
+  value,
+  onChange,
+  style,
+  multiline = false,
+  ...props
+}) => {
   const [autocompleteOpen, setAutocompleteOpen] = useState(false);
-  const [autocompletePosition, setAutocompletePosition] = useState({ x: 0, y: 0, lineHeight: 20 });
-  const [cursorPosition, setCursorPosition] = useState(0);
+  const [autocompletePosition, setAutocompletePosition] = useState({
+    x: 0,
+    y: 0,
+    lineHeight: 20
+  });
   const [showPillMode, setShowPillMode] = useState(false);
-  const inputRef = useRef(null);
 
-  // Parse value to extract variable references
+  const inputRef = useRef(null);
+  const overlayRef = useRef(null);
+  const cursorPositionRef = useRef(0);
+  const scrollTopRef = useRef(0);
+
   const parseVariables = (text) => {
     if (!text) return [];
     const regex = /{{([^}]+)}}/g;
@@ -30,211 +39,218 @@ export const SmartTextInput = ({ value, onChange, style, ...props }) => {
 
   const variables = parseVariables(value);
 
-  // Detect {{ keystroke and cursor position changes
-  const handleInputChange = (e) => {
-    // Call parent onChange handler first
-    if (onChange) {
-      onChange(e);
+  useEffect(() => {
+    if (multiline && inputRef.current) {
+      const textarea = inputRef.current;
+      textarea.style.height = 'auto';
+      const maxHeight = 100;
+      textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
     }
+  }, [value, multiline]);
 
+  useLayoutEffect(() => {
     const input = inputRef.current;
     if (!input) return;
+    input.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current);
+    input.scrollTop = scrollTopRef.current;
+    if (overlayRef.current) {
+      overlayRef.current.scrollTop = scrollTopRef.current;
+    }
+  }, [value]);
 
-    const cursorPos = getCursorPosition(input);
-    setCursorPosition(cursorPos);
+  const handleInputChange = (e) => {
+    const input = inputRef.current;
+    if (!input) return;
+    cursorPositionRef.current = input.selectionStart;
+    scrollTopRef.current = input.scrollTop;
+    onChange?.(e);
+  };
 
-    // Check if {{ was just typed - DISABLED
-    // const textBefore = e.target.value.substring(0, cursorPos);
-    // if (textBefore.endsWith('{{')) {
-    //   // Get cursor coordinates for dropdown positioning
-    //   const coords = getCaretCoordinatesAbsolute(input, cursorPos);
-    //   setAutocompletePosition(coords);
-    //   setAutocompleteOpen(true);
-    // }
+  const handlePaste = (e) => {
+    const input = inputRef.current;
+    if (!input) return;
+    e.preventDefault();
+    const pasteText = e.clipboardData.getData('text');
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const newValue =
+      value.substring(0, start) +
+      pasteText +
+      value.substring(end);
+    cursorPositionRef.current = start + pasteText.length;
+    scrollTopRef.current = input.scrollTop;
+    onChange?.({ target: { value: newValue } });
   };
 
   const handleClick = () => {
-    const input = inputRef.current;
-    if (!input) return;
-    const cursorPos = getCursorPosition(input);
-    setCursorPosition(cursorPos);
+    if (!inputRef.current) return;
+    cursorPositionRef.current = getCursorPosition(inputRef.current);
+    scrollTopRef.current = inputRef.current.scrollTop;
   };
 
-  const handleKeyUp = (e) => {
-    // Update cursor position on arrow keys, home, end, etc.
-    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-      const input = inputRef.current;
-      if (!input) return;
-      const cursorPos = getCursorPosition(input);
-      setCursorPosition(cursorPos);
-    }
-  };
-
-  // Handle variable selection from autocomplete
   const handleVariableSelect = (variable) => {
     const input = inputRef.current;
     if (!input) return;
-
-    // Find and remove the {{ that triggered autocomplete
-    const textBefore = input.value.substring(0, cursorPosition);
+    const cursorPos = cursorPositionRef.current;
+    const textBefore = input.value.substring(0, cursorPos);
     const lastBraceIndex = textBefore.lastIndexOf('{{');
-
     if (lastBraceIndex !== -1) {
-      // Remove the {{ and insert the complete variable
       const newValue =
         input.value.substring(0, lastBraceIndex) +
         variable +
-        input.value.substring(cursorPosition);
-
-      // Update value through onChange
-      if (onChange) {
-        onChange({ target: { value: newValue } });
-      }
-
-      // Set cursor after inserted variable
-      setTimeout(() => {
-        const newPosition = lastBraceIndex + variable.length;
-        input.focus();
-        input.setSelectionRange(newPosition, newPosition);
-        setCursorPosition(newPosition);
-      }, 0);
+        input.value.substring(cursorPos);
+      cursorPositionRef.current = lastBraceIndex + variable.length;
+      scrollTopRef.current = input.scrollTop;
+      onChange?.({ target: { value: newValue } });
     }
-
     setAutocompleteOpen(false);
   };
 
-  // Handle autocomplete close
-  const handleAutocompleteClose = () => {
-    setAutocompleteOpen(false);
-    // Return focus to input
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-
-  // Handle variable pill removal
   const handleRemoveVariable = (varIndex) => {
     const variable = variables[varIndex];
     if (!variable) return;
-
-    // Remove the {{variable}} from the value
-    const newValue = value.substring(0, variable.index) + value.substring(variable.index + variable.fullMatch.length);
-
-    if (onChange) {
-      onChange({ target: { value: newValue } });
-    }
+    const newValue =
+      value.substring(0, variable.index) +
+      value.substring(variable.index + variable.fullMatch.length);
+    cursorPositionRef.current = variable.index;
+    scrollTopRef.current = inputRef.current?.scrollTop ?? 0;
+    onChange?.({ target: { value: newValue } });
   };
+
+  const renderTextWithPills = () => {
+    if (!value) return null;
+    const parts = [];
+    let lastIndex = 0;
+
+    variables.forEach((variable, i) => {
+      if (variable.index > lastIndex) {
+        parts.push(
+          <span key={`text-${lastIndex}`} style={{ whiteSpace: 'pre-wrap' }}>
+            {value.substring(lastIndex, variable.index)}
+          </span>
+        );
+      }
+
+      parts.push(
+        <span
+          key={`var-${i}`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            backgroundColor: '#dbeafe',
+            color: '#1e40af',
+            borderRadius: '3px',
+            padding: '2px 6px',
+            fontSize: '10px',
+            fontFamily: 'monospace'
+          }}
+        >
+          {variable.variable}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleRemoveVariable(i);
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0 2px',
+              fontSize: '9px',
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            ✕
+          </button>
+        </span>
+      );
+
+      lastIndex = variable.index + variable.fullMatch.length;
+    });
+
+    if (lastIndex < value.length) {
+      parts.push(
+        <span key={`text-${lastIndex}`} style={{ whiteSpace: 'pre-wrap' }}>
+          {value.substring(lastIndex)}
+        </span>
+      );
+    }
+
+    return parts;
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '4px 6px',
+    border: '1px solid #d1d5db',
+    borderRadius: '4px',
+    fontSize: '11px',
+    fontFamily: 'inherit',
+    outline: 'none',
+    ...(multiline && {
+      resize: 'none',
+      overflowY: 'auto',
+      minHeight: '60px',
+      maxHeight: '36px'
+    }),
+    ...(showPillMode && variables.length > 0 ? { opacity: 0 } : {}),
+    ...style
+  };
+
+  const InputElement = multiline ? 'textarea' : 'input';
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      {/* Input field */}
-      <div style={{ position: 'relative' }}>
-        <input
-          ref={inputRef}
-          type="text"
-          value={value || ''}
-          onChange={handleInputChange}
-          onClick={handleClick}
-          onKeyUp={handleKeyUp}
-          onFocus={() => setShowPillMode(false)}
-          onBlur={() => setTimeout(() => setShowPillMode(true), 150)}
+      <InputElement
+        ref={inputRef}
+        {...(!multiline && { type: 'text' })}
+        value={value || ''}
+        onChange={handleInputChange}
+        onPaste={handlePaste}
+        onClick={handleClick}
+        onScroll={(e) => {
+          scrollTopRef.current = e.target.scrollTop;
+          if (overlayRef.current) {
+            overlayRef.current.scrollTop = e.target.scrollTop;
+          }
+        }}
+        onFocus={() => setShowPillMode(false)}
+        onBlur={() => setTimeout(() => setShowPillMode(true), 150)}
+        style={inputStyle}
+        {...props}
+      />
+
+      {showPillMode && variables.length > 0 && (
+        <div
+          ref={overlayRef}
           style={{
-            width: '100%',
+            position: 'absolute',
+            inset: 0,
             padding: '4px 6px',
             border: '1px solid #d1d5db',
             borderRadius: '4px',
-            fontSize: '11px',
-            outline: 'none',
-            transition: 'border-color 0.2s',
-            ...(showPillMode && variables.length > 0 ? { opacity: 0 } : {}),
-            ...style
+            background: '#fff',
+            cursor: 'text',
+            whiteSpace: 'pre-wrap',
+            overflowY: 'auto'
           }}
-          {...props}
-        />
-
-        {/* Pill overlay when not focused */}
-        {showPillMode && variables.length > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              padding: '4px 6px',
-              border: '1px solid #d1d5db',
-              borderRadius: '4px',
-              fontSize: '11px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              backgroundColor: '#ffffff',
-              pointerEvents: 'auto',
-              cursor: 'text'
-            }}
-            onClick={() => {
-              setShowPillMode(false);
-              if (inputRef.current) {
-                inputRef.current.focus();
-              }
-            }}
-          >
-            {variables.map((variable, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  backgroundColor: '#dbeafe',
-                  color: '#1e40af',
-                  borderRadius: '3px',
-                  padding: '2px 6px',
-                  fontSize: '10px',
-                  fontWeight: 500,
-                  fontFamily: 'monospace'
-                }}
-              >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M7 7h10v3l4 4-4 4v3H7v-3l-4-4 4-4V7z"/>
-                </svg>
-                {variable.variable}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveVariable(index);
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: '#1e40af',
-                    opacity: 0.6,
-                    transition: 'opacity 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = 0.6}
-                >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+          onClick={() => {
+            setShowPillMode(false);
+            inputRef.current?.focus();
+          }}
+        >
+          {renderTextWithPills()}
+        </div>
+      )}
 
       {autocompleteOpen && (
         <VariableAutocomplete
           inputRef={inputRef}
-          cursorPosition={cursorPosition}
           onSelect={handleVariableSelect}
-          onClose={handleAutocompleteClose}
+          onClose={() => setAutocompleteOpen(false)}
           position={autocompletePosition}
         />
       )}

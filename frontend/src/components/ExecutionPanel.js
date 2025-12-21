@@ -1,6 +1,3 @@
-// ExecutionPanel.js
-// Component for displaying pipeline execution results in the Node Details Panel
-
 import { useStore } from '../store';
 
 export const ExecutionPanel = ({ nodeId }) => {
@@ -13,7 +10,7 @@ export const ExecutionPanel = ({ nodeId }) => {
   const hasExecuted = nodeIndex !== -1 && nodeIndex < currentNodeIndex;
   const isCurrentlyExecuting = nodeIndex === currentNodeIndex && isExecuting;
 
-  // If pipeline hasn't been run yet
+
   if (!isExecuting && executionOrder.length === 0) {
     return (
       <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
@@ -24,7 +21,6 @@ export const ExecutionPanel = ({ nodeId }) => {
     );
   }
 
-  // If node is currently executing
   if (isCurrentlyExecuting) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -58,7 +54,6 @@ export const ExecutionPanel = ({ nodeId }) => {
     );
   }
 
-  // If node encountered an error
   if (nodeError) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -77,7 +72,6 @@ export const ExecutionPanel = ({ nodeId }) => {
     );
   }
 
-  // If node has executed successfully
   if (hasExecuted && nodeResult) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -93,7 +87,6 @@ export const ExecutionPanel = ({ nodeId }) => {
           </p>
         </div>
 
-        {/* Display results */}
         <div>
           <h4 style={{ fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: '8px' }}>
             Results:
@@ -108,7 +101,6 @@ export const ExecutionPanel = ({ nodeId }) => {
     );
   }
 
-  // Node hasn't executed yet (waiting in queue)
   if (nodeIndex !== -1 && nodeIndex >= currentNodeIndex) {
     return (
       <div style={{ padding: '16px', backgroundColor: '#fef3c7', borderRadius: '8px', border: '1px solid #fde68a' }}>
@@ -125,7 +117,6 @@ export const ExecutionPanel = ({ nodeId }) => {
     );
   }
 
-  // Default: no execution info
   return (
     <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
       <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>
@@ -135,7 +126,6 @@ export const ExecutionPanel = ({ nodeId }) => {
   );
 };
 
-// Component to display individual result fields
 const ResultField = ({ fieldName, value }) => {
   const isLongText = typeof value === 'string' && value.length > 200;
   const isArray = Array.isArray(value);
@@ -164,7 +154,6 @@ const ResultField = ({ fieldName, value }) => {
         </span>
       </div>
 
-      {/* Render value based on type */}
       {isArray ? (
         <div style={{ fontSize: '11px', color: '#111827', fontFamily: 'monospace' }}>
           <div style={{ marginBottom: '4px', color: '#6b7280' }}>
@@ -217,7 +206,6 @@ const ResultField = ({ fieldName, value }) => {
   );
 };
 
-// Helper to determine value type
 function getValueType(value) {
   if (value === null) return 'null';
   if (value === undefined) return 'undefined';

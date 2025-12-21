@@ -1,5 +1,3 @@
-// VariableAutocomplete.js
-// Dropdown component for variable selection (triggered by typing {{)
 
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../store';
@@ -12,7 +10,7 @@ export const VariableAutocomplete = ({
   position
 }) => {
   const getAvailableVariables = useStore((state) => state.getAvailableVariables);
-  const [step, setStep] = useState('nodes'); // 'nodes' | 'fields'
+  const [step, setStep] = useState('nodes'); 
   const [selectedNode, setSelectedNode] = useState(null);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [filterText, setFilterText] = useState('');
@@ -20,17 +18,14 @@ export const VariableAutocomplete = ({
 
   const availableNodes = getAvailableVariables();
 
-  // Filter nodes based on search text
   const filteredNodes = filterText
     ? availableNodes.filter(node =>
         node.nodeName.toLowerCase().includes(filterText.toLowerCase())
       )
     : availableNodes;
 
-  // Get current list to display
   const currentList = step === 'nodes' ? filteredNodes : (selectedNode?.outputFields || []);
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       switch (e.key) {
@@ -65,7 +60,6 @@ export const VariableAutocomplete = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [highlightedIndex, currentList, step]);
 
-  // Handle typing in input (for filtering)
   useEffect(() => {
     if (!inputRef.current) return;
 
@@ -74,7 +68,6 @@ export const VariableAutocomplete = ({
         const cursorPos = inputRef.current.selectionStart;
         const value = inputRef.current.value;
 
-        // Extract text after {{ for filtering
         const beforeCursor = value.substring(0, cursorPos);
         const match = beforeCursor.match(/\{\{([^}]*)$/);
         if (match) {
@@ -91,12 +84,10 @@ export const VariableAutocomplete = ({
     };
   }, [inputRef, step]);
 
-  // Reset highlighted index when list changes
   useEffect(() => {
     setHighlightedIndex(0);
   }, [filteredNodes.length, step]);
 
-  // Scroll highlighted item into view
   useEffect(() => {
     if (dropdownRef.current) {
       const highlightedElement = dropdownRef.current.children[highlightedIndex];
@@ -108,12 +99,10 @@ export const VariableAutocomplete = ({
 
   const handleSelect = (item) => {
     if (step === 'nodes') {
-      // Selected a node, move to fields step
       setSelectedNode(item);
       setStep('fields');
       setHighlightedIndex(0);
     } else {
-      // Selected a field, insert variable
       const variable = `{{${selectedNode.nodeName}.${item.name}}}`;
       onSelect(variable);
       onClose();
@@ -150,7 +139,6 @@ export const VariableAutocomplete = ({
         minWidth: '280px'
       }}
     >
-      {/* Header */}
       <div style={{
         fontSize: '11px',
         fontWeight: 600,
@@ -181,7 +169,6 @@ export const VariableAutocomplete = ({
         </span>
       </div>
 
-      {/* List */}
       <div>
         {currentList.map((item, index) => {
           const isHighlighted = index === highlightedIndex;
@@ -257,7 +244,6 @@ export const VariableAutocomplete = ({
         })}
       </div>
 
-      {/* Footer hint */}
       <div style={{
         marginTop: '8px',
         paddingTop: '8px',
